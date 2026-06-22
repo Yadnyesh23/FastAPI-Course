@@ -9,10 +9,14 @@
 - Running the server
 - Swagger UI, ReDoc & automatic docs
 
-**Build:** Library API
+**Build:** Personal Portfolio API
 - `GET /`
-- `GET /books`
-- `GET /authors`
+- `GET /about`
+- `GET /skills`
+- `GET /education`
+- `GET /projects`
+- `GET /contact`
+
 
 ---
 
