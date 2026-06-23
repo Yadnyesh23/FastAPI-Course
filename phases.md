@@ -24,7 +24,9 @@
 
 **Topics**
 - HTTP methods: `GET` `POST` `PUT` `PATCH` `DELETE`
-- Path parameters: `int` `str` `float` `UUID`
+- Path parameters: identify resources -  `int` `str` `float` `UUID`
+- Query parameters: filter/search data `int` `str` `float` `UUID`
+- Request Bodies
 - Enums & status codes
 - Tags, summary & description
 
