@@ -1,272 +1,147 @@
-# FastAPI Learning Roadmap
-
-## Phase 1 — First Steps
-
-**Topics**
-- What is FastAPI & why use it
-- ASGI & Uvicorn
-- Installing FastAPI & project structure
-- Running the server
-- Swagger UI, ReDoc & automatic docs
-
-**Build:** Personal Portfolio API
-- `GET /`
-- `GET /about`
-- `GET /skills`
-- `GET /education`
-- `GET /projects`
-- `GET /contact`
-
-
----
-
-## Phase 2 — Path Operations
-
-**Topics**
-- HTTP methods: `GET` `POST` `PUT` `PATCH` `DELETE`
-- Path parameters: identify resources -  `int` `str` `float` `UUID`
-- Query parameters: filter/search data `int` `str` `float` `UUID`
-- Request Bodies
-- Enums & status codes
-- Tags, summary & description
-
-**Build:** Student Management API
-
----
-
-## Phase 3 — Query Parameters
-
-**Topics**
-- Optional & required params
-- Default values
-- Pagination, searching & filtering
-
-**Build:** Movie Search API
-
----
-
-## Phase 4 — Request Body
-
-**Topics**
-- JSON & nested JSON
-- Lists & dicts
-- Optional fields & default values
-
-**Build:** Restaurant API
-
----
-
-## Phase 5 — Pydantic
-
-**Topics**
-- `BaseModel` & `model_config`
-- `Field`, `Annotated` & validation
-- Examples & computed fields
-- Model inheritance & nested models
-
-**Build:** Amazon Product API
-
----
-
-## Phase 6 — Response Models
-
-**Topics**
-- `response_model`
-- include / exclude fields
-- Aliases & custom responses
-
-**Build:** Bank API — hide passwords from responses
-
----
-
-## Phase 7 — Validation
-
-**Topics**
-- Path, query & body validation
-- Regex, length & range constraints
-
-**Build:** User Registration API
-
----
-
-## Phase 8 — Error Handling
-
-**Topics**
-- `HTTPException` & validation errors
-- Custom exceptions & exception handlers
-
-**Build:** Hospital API
-
----
-
-## Phase 9 — Dependencies
-
-> Probably the most important FastAPI concept.
-
-**Topics**
-- `Depends()` & nested dependencies
-- Classes as dependencies
-- Shared & global dependencies
-
-**Build:** Authentication Middleware Simulation
-
----
-
-## Phase 10 — Security
-
-**Topics**
-- OAuth2 & JWT
-- Password hashing
-- Login, access tokens & refresh tokens
-- Scopes
-
-**Build:** Complete Authentication System
-
----
-
-## Phase 11 — File Uploads
-
-**Topics**
-- `UploadFile`, `File`, `Form`
-- Multipart & image upload
-
-**Build:** Portfolio Backend — upload profile picture
-
----
-
-## Phase 12 — Cookies & Headers
-
-**Topics**
-- Cookies & response cookies
-- Request & custom headers
-
-**Build:** Session API
-
----
-
-## Phase 13 — CORS
-
-**Topics**
-- `CORSMiddleware`
-- Origins & credentials
-
-**Build:** Connect a React frontend
-
----
-
-## Phase 14 — Middleware
-
-**Topics**
-- Custom middleware
-- Logging, timing & authentication
-
-**Build:** API Logger
-
----
-
-## Phase 15 — Background Tasks
-
-**Topics**
-- `BackgroundTasks`
-- Long-running jobs
-
-**Build:** Email Sender
-
----
-
-## Phase 16 — Database
-
-**Topics**
-- SQLAlchemy: sessions, models & relationships
-- CRUD operations
-- Alembic migrations
-
-**Build:** Complete Blog Backend
-
----
-
-## Phase 17 — Async Database
-
-**Topics**
-- Async SQLAlchemy & `AsyncSession`
-- `asyncpg`
-
-**Build:** Convert a backend to async
-
----
-
-## Phase 18 — WebSockets
-
-**Topics**
-- Live communication
-- Connection manager, rooms & broadcast
-
-**Build:** Live Chat API
-
----
-
-## Phase 19 — Testing
-
-**Topics**
-- `pytest` & `TestClient`
-- Mocking & dependency override
-
-**Build:** Test suite for the Blog API
-
----
-
-## Phase 20 — Project Structure
-
-**Topics**
-routers/
-
-models/
-
-schemas/
-
-crud/
-
-services/
-
-utils/
-
-config/
-
-database/
-
-middlewares/
-
-dependencies/
-
-**Build:** Refactor Blog API into production structure
-
----
-
-## Phase 21 — Advanced FastAPI
-
-**Topics**
-- Custom `APIRoute` & lifespan events (startup & shutdown)
-- `StreamingResponse`, `FileResponse`, `HTMLResponse`, `RedirectResponse`
-- GZip & Trusted Host middleware
-- WSGI apps, sub-applications & static files
-- OpenAPI customization, additional responses & API versioning
-- Callbacks, webhooks & custom OpenAPI
-- Dependency caching, dataclasses & advanced security
-- Custom JSON encoders, background processing & proxy config
-- Request state, context variables & custom exception classes
-- Async tests, server workers & deployment
-
-**Build:** Production-grade E-Commerce Backend
-
----
-
-## Phase 22 — Deployment
-
-**Topics**
-- Docker & Docker Compose
-- Nginx & HTTPS
-- Environment variables
-- Gunicorn / Uvicorn workers
-- Railway, Render & VPS
-
-**Build:** Deploy your API publicly
+# FastAPI Roadmap
+
+## Phase 1 – Basics
+- FastAPI Introduction
+- Uvicorn
+- Swagger Docs
+- OpenAPI
+
+## Phase 2 – Core API Development
+- HTTP Methods
+- Path Parameters
+- Query Parameters
+- Request Body
+- Pydantic Models
+- Validation
+- Response Models
+- Status Codes
+- Headers & Cookies
+
+## Phase 3 — Dependency Injection
+- Depends()
+- Reusable Logic
+- Parameterized Dependencies
+- Nested Dependencies
+- Authentication Dependencies
+
+## Phase 4 — Project Structure
+- APIRouter
+- Splitting Files
+- Modular Architecture
+- Versioning APIs
+- Large Project Organization
+
+## Phase 5 — Database Integration
+- SQLAlchemy
+- SQLModel
+- Database Sessions
+- CRUD Operations
+- Relationships
+- Migrations
+- Alembic
+
+## Phase 6 — Authentication & Authorization
+- Password Hashing
+- JWT Tokens
+- OAuth2
+- Login System
+- Register System
+- Role-Based Access Control (RBAC)
+- Refresh Tokens
+
+## Phase 7 — Middleware
+- What Middleware Is
+- Request Processing
+- Response Processing
+- Custom Middleware
+- CORS Middleware
+
+## Phase 8 — Exception Handling
+- Custom Exceptions
+- Global Exception Handlers
+- Validation Error Handling
+- Production Error Responses
+
+## Phase 9 — Background Tasks
+- BackgroundTasks
+- Email Sending
+- Long Running Operations
+- Async Processing
+
+## Phase 10 — File Handling
+- UploadFile
+- File Uploads
+- Image Uploads
+- PDF Uploads
+- Streaming Files
+- Static Files
+
+## Phase 11 — Advanced Pydantic
+- Computed Fields
+- Model Config
+- Aliases
+- Generic Models
+- Complex Nested Models
+
+## Phase 12 — Async Programming
+- async/await
+- Event Loop
+- Async Routes
+- Async Database Access
+- Concurrency
+
+## Phase 13 — WebSockets
+- Real-time Communication
+- Chat Applications
+- Notifications
+- Live Updates
+
+## Phase 14 — Security
+- Security Utilities
+- API Keys
+- OAuth2
+- CSRF Concepts
+- Rate Limiting Concepts
+
+## Phase 15 — Testing
+- TestClient
+- Pytest
+- API Testing
+- Mocking Dependencies
+- Integration Testing
+
+## Phase 16 — OpenAPI & Documentation
+- OpenAPI Customization
+- Tags
+- Descriptions
+- Examples
+- Metadata
+
+## Phase 17 — Performance
+- Caching
+- Redis
+- Connection Pooling
+- Optimization
+- Profiling
+
+## Phase 18 — Deployment
+- Gunicorn
+- Uvicorn Workers
+- Docker
+- Nginx
+- Environment Variables
+- Production Settings
+
+## Phase 19 — Production Architecture
+- Logging
+- Monitoring
+- Health Checks
+- Configuration Management
+- Secrets Management
+
+## Phase 20 — Advanced FastAPI
+- Lifespan Events
+- Event Handlers
+- Custom Responses
+- Streaming Responses
+- Server-Sent Events (SSE)
