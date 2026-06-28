@@ -4,492 +4,327 @@
 
 By the end of this phase, you should understand:
 
-Dependency Graph
+- Dependency Graph
+- Dependency Resolution Order
+- Dependency Caching
+- `use_cache=False`
+- yield Dependencies
+- Database Session Pattern
+- Classes as Dependencies
+- Dependency Overrides
+- Best Practices
 
-Dependency Resolution Order
+---
 
-Dependency Caching
-
-use_cache=False
-
-yield Dependencies
-
-Database Session Pattern
-
-Classes as Dependencies
-
-Dependency Overrides
-
-Best Practices
-
-1. Dependency Graph
+## 1. Dependency Graph
 
 FastAPI builds a dependency graph before executing a route.
 
-Example:
-
-Python
-
-Code
-
+```python
 def get_token():
-
-return "abc123"
+    return "abc123"
 
 def get_user(token: str = Depends(get_token)):
-
-return {"name": "Yadnyesh"}
+    return {"name": "Yadnyesh"}
 
 @app.get("/")
-
 def root(user=Depends(get_user)):
+    return user
+```
 
-return user
+**Dependency Graph:**
 
-Dependency Graph:
-
+```
 root()
-
-↑
-
+  ↑
 get_user()
-
-↑
-
+  ↑
 get_token()
+```
 
-Execution Order:
+**Execution Order:**
 
+```
 Request
-
-↓
-
+  ↓
 get_token()
-
-↓
-
+  ↓
 get_user()
-
-↓
-
+  ↓
 root()
-
-↓
-
+  ↓
 Response
+```
 
-2. Dependency Caching
+---
+
+## 2. Dependency Caching
 
 FastAPI executes the same dependency only once per request.
 
-Example:
-
+```python
 def get_user():
-
-print("Running...")
-
-return {"name": "Yadnyesh"}
+    print("Running...")
+    return {"name": "Yadnyesh"}
 
 @app.get("/")
-
 def root(
-
-user1=Depends(get_user),
-
-user2=Depends(get_user)
-
+    user1=Depends(get_user),
+    user2=Depends(get_user)
 ):
+    return {"u1": user1, "u2": user2}
+```
 
-return {"u1": user1, "u2": user2}
+**Output:** `Running...` — printed only once.
 
-Output:
+---
 
-Running...
+## 3. Cache Scope
 
-Printed only once.
+The cache is **per request**, not global.
 
-3. Cache Scope
+```
+Request 1:  get_user() ← executed
+Request 2:  get_user() ← executed again
+```
 
-The cache is per request, not global.
+---
 
-Request 1:
+## 4. Disabling Cache
 
-get_user() ← executed
+Use `use_cache=False` to force the dependency to run every time it is requested within the same request.
 
-Request 2:
-
-get_user() ← executed again
-
-4. Disabling Cache
-
-Use use_cache=False.
-
+```python
 Depends(get_time, use_cache=False)
+```
 
-This forces the dependency to run every time it is requested within the same request.
+---
 
-5. yield Dependencies
+## 5. yield Dependencies
 
 This is one of the most important FastAPI patterns.
 
-Problem with return:
+**Problem with `return`:**
 
+```python
 def get_db():
+    db = SessionLocal()
+    return db  # ❌ connection is never closed
+```
 
-db = SessionLocal()
+**Correct Pattern:**
 
-return db
-
-The database connection is never closed.
-
-Correct Pattern:
-
+```python
 def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+```
 
-db = SessionLocal()
+---
 
-try:
+## 6. How yield Works
 
-yield db
-
-finally:
-
-db.close()
-
-6. How yield Works
-
-Flow:
-
+```
 Open Resource
-
-↓
-
+  ↓
 yield Resource
-
-↓
-
+  ↓
 Route Executes
-
-↓
-
+  ↓
 Resume Dependency
-
-↓
-
+  ↓
 Cleanup Resource
+```
 
-FastAPI pauses the dependency at yield, runs the route, then resumes the dependency to execute cleanup code.
+FastAPI **pauses** the dependency at `yield`, runs the route, then **resumes** the dependency to execute cleanup code.
 
-7. Why yield Is Used for Database Sessions
+---
+
+## 7. Why yield Is Used for Database Sessions
 
 Database connections must be:
 
-Opened
+1. Opened
+2. Used
+3. Closed
 
-Used
+If connections are never closed, the application suffers from **connection leaks** and eventually the database refuses new connections.
 
-Closed
+---
 
-If connections are never closed, the application suffers from connection leaks and eventually the database refuses new connections.
+## 8. return vs yield
 
-8. return vs yield
+| Feature | `return` | `yield` |
+|---|---|---|
+| Ends the function | ✅ | ❌ |
+| Can resume later | ❌ | ✅ |
+| Cleanup after route | ❌ | ✅ |
+| Use case | Simple values | Resources needing cleanup |
 
-return
+---
 
-	
-
-yield
-
-
-
-
-Ends the function
-
-	
-
-Pauses the function
-
-
-
-
-Never resumes
-
-	
-
-Can resume later
-
-
-
-
-No cleanup after returning
-
-	
-
-Cleanup possible after route execution
-
-
-
-
-Used for simple values
-
-	
-
-Used for resources needing cleanup
-
-9. Classes as Dependencies
+## 9. Classes as Dependencies
 
 Dependencies can be classes.
 
-Example:
-
+```python
 class Pagination:
-
-def init(self, limit: int = 10, skip: int = 0):
-
-self.limit = limit
-
-self.skip = skip
-
-Use it:
+    def __init__(self, limit: int = 10, skip: int = 0):
+        self.limit = limit
+        self.skip = skip
 
 @app.get("/students")
-
 def students(query: Pagination = Depends()):
+    return {"limit": query.limit, "skip": query.skip}
+```
 
-return {"limit": query.limit, "skip": query.skip}
+**Request:** `/students?limit=5&skip=15`
 
-Request:
+**Response:** `{"limit": 5, "skip": 15}`
 
-/students?limit=5&skip=15
+---
 
-Response:
-
-{"limit": 5, "skip": 15}
-
-10. Why Use Classes as Dependencies?
+## 10. Why Use Classes as Dependencies?
 
 Useful for grouping related parameters such as:
 
-Pagination
+- Pagination
+- Filters
+- Search options
+- Sorting
+- Configuration
 
-Filters
+---
 
-Search options
+## 11. Dependency Overrides
 
-Sorting
+Used mainly for **testing**.
 
-Configuration
-
-11. Dependency Overrides
-
-Used mainly for testing.
-
-Real dependency:
-
+```python
+# Real dependency
 def get_db():
+    return RealDatabase()
 
-return RealDatabase()
-
-Fake dependency:
-
+# Fake dependency
 def fake_db():
+    return FakeDatabase()
 
-return FakeDatabase()
-
-Override:
-
+# Override
 app.dependency_overrides[get_db] = fake_db
+```
 
-Now every route using Depends(get_db) receives FakeDatabase().
+Now every route using `Depends(get_db)` receives `FakeDatabase()`.
 
-12. Why Dependency Overrides Are Useful
+---
+
+## 12. Why Dependency Overrides Are Useful
 
 They make tests:
 
-Faster
+- ⚡ Faster
+- 🔒 Safer
+- 🔗 Independent of real databases
+- 🎯 Predictable
 
-Safer
+---
 
-Independent of real databases
+## 13. Best Practices
 
-Predictable
+**Keep dependencies focused.**
 
-13. Best Practices
+```python
+# ❌ Bad
+def do_everything(): ...
 
-Keep dependencies focused.
+# ✅ Good
+def get_current_user(): ...
+def get_db(): ...
+def verify_admin(): ...
+```
 
-Bad:
+**Use `yield` for cleanup** — whenever a resource must be closed or cleaned up.
 
-def do_everything():
+**Reuse dependencies** — write authentication, database, and permission logic once and reuse it across routes.
 
-Good:
+**Keep business logic out of dependencies** — dependencies should prepare resources or validate access, not implement core business rules.
 
+---
+
+## 14. Real-World Pattern
+
+```python
 def get_current_user():
+    ...
 
 def get_db():
-
-def verify_admin():
-
-Use yield for cleanup.
-
-Use yield whenever a resource must be closed or cleaned up.
-
-Reuse dependencies.
-
-Write authentication, database, and permission logic once and reuse it across routes.
-
-Keep business logic out of dependencies.
-
-Dependencies should prepare resources or validate access, not implement core business rules.
-
-14. Real TesLearn Pattern
-
-def get_current_user():
-
-...
-
-def get_db():
-
-yield db
+    yield db
 
 @app.post("/notes")
-
 def create_note(
-
-user=Depends(get_current_user),
-
-db=Depends(get_db)
-
+    user=Depends(get_current_user),
+    db=Depends(get_db)
 ):
+    ...
+```
 
-...
+**Execution Flow:**
 
-Execution Flow:
-
+```
 Request
-
-↓
-
+  ↓
 Verify User
-
-↓
-
+  ↓
 Open DB Connection
-
-↓
-
+  ↓
 Execute Route
-
-↓
-
+  ↓
 Close DB Connection
-
-↓
-
+  ↓
 Response
+```
 
-15. Interview Questions
+---
 
-What is a Dependency Graph?
+## 15. Interview Questions
 
-How does FastAPI resolve dependencies?
+1. What is a Dependency Graph?
+2. How does FastAPI resolve dependencies?
+3. What is Dependency Caching?
+4. When is the cache cleared?
+5. What does `use_cache=False` do?
+6. What is a yield dependency?
+7. Why is `yield` used for database sessions?
+8. Difference between `return` and `yield`?
+9. Can classes be dependencies?
+10. What are Dependency Overrides?
+11. Why are Dependency Overrides useful during testing?
+12. What are the benefits of Dependency Injection?
 
-What is Dependency Caching?
+---
 
-When is the cache cleared?
+## 16. Quick Cheat Sheet
 
-What does use_cache=False do?
+| Feature | Purpose |
+|---|---|
+| `Depends()` | Inject dependency |
+| `use_cache=False` | Disable per-request caching |
+| `yield` | Setup + Cleanup |
+| `get_db()` | Database session dependency |
+| Class Dependency | Group related parameters |
+| `dependency_overrides` | Replace dependencies during tests |
 
-What is a yield dependency?
+---
 
-Why is yield used for database sessions?
+## 17. Key Takeaways
 
-Difference between return and yield?
-
-Can classes be dependencies?
-
-What are Dependency Overrides?
-
-Why are Dependency Overrides useful during testing?
-
-What are the benefits of Dependency Injection?
-
-16. Quick Cheat Sheet
-
-Feature
-
-	
-
-Purpose
-
-
-
-
-Depends()
-
-	
-
-Inject dependency
-
-
-
-
-use_cache=False
-
-	
-
-Disable per-request caching
-
-
-
-
-yield
-
-	
-
-Setup + Cleanup
-
-
-
-
-get_db()
-
-	
-
-Database session dependency
-
-
-
-
-Class Dependency
-
-	
-
-Group related parameters
-
-
-
-
-dependency_overrides
-
-	
-
-Replace dependencies during tests
-
-17. Key Takeaways
-
-FastAPI builds a dependency graph automatically.
-
-Dependencies are executed in the correct order.
-
-Dependency results are cached per request.
-
-yield dependencies support setup and cleanup.
-
-Database sessions should use yield.
-
-Classes can be used as dependencies.
-
-Dependency Overrides make testing easy.
-
-Small, reusable dependencies are a core FastAPI best practice.
+- FastAPI builds a dependency graph automatically.
+- Dependencies are executed in the correct order.
+- Dependency results are **cached per request**.
+- `yield` dependencies support setup and cleanup.
+- Database sessions should use `yield`.
+- Classes can be used as dependencies.
+- Dependency Overrides make testing easy.
+- Small, reusable dependencies are a core FastAPI best practice.
