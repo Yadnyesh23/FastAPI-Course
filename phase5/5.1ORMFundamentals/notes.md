@@ -5,6 +5,7 @@
 By the end of this phase, you should understand:
 
 - What is a Database?
+- Why to use Database?
 - What is SQL?
 - What is an ORM?
 - Why ORMs exist
