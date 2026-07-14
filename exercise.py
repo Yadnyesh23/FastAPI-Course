@@ -1,17 +1,15 @@
-# 1.Get all active students.
+# Return all students with their notes (INNER JOIN).
 
-select(Student).where(Student.is_active == True)
+select(Student, Note).join(Note)
 
+# Return all students, even those without notes (LEFT OUTER JOIN).
 
-# 2.Get students whose age is between 18 and 25.
+select(Student, Note).outerjoin(Note)
 
-select(Student).where(Student.age.between(18, 25))
+# Return only student names and note titles.
 
-# 3.Get students whose names start with "A".
-select(Student).where(Student.name.like("A%"))
+select(Student.name , Note.title).join(Note)
 
-# 4.Return the 10 youngest students.
-select(Student).order_by(Student.age)
+# Return all notes belonging to the student named "Yadnyesh".
 
-# 5.Count total students.
-select(func.count(Student.id))
+select(Student, Note).join(Note).where(Student.name == "Yadnyesh")
