@@ -38,7 +38,10 @@
 - CRUD Operations
 - Relationships
 - Migrations
-- Alembic
+
+## Phase 6 - Migrations and Alembic
+- What is alembic
+- How to initialize 
 
 ## Phase 6 — Authentication & Authorization
 - Password Hashing
