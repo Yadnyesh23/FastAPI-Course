@@ -40,8 +40,12 @@
 - Migrations
 
 ## Phase 6 - Migrations and Alembic
+- Why migrations are needed
 - What is alembic
-- How to initialize 
+- Install and use alembic
+- How to create migrations
+- Database versions
+- Merge Migrations
 
 ## Phase 6 — Authentication & Authorization
 - Password Hashing
