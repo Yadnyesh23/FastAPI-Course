@@ -47,7 +47,7 @@
 - Database versions
 - Merge Migrations
 
-## Phase 6 — Authentication & Authorization
+## Phase 7 — Authentication & Authorization
 - Password Hashing
 - JWT Tokens
 - OAuth2
@@ -56,26 +56,26 @@
 - Role-Based Access Control (RBAC)
 - Refresh Tokens
 
-## Phase 7 — Middleware
+## Phase 8 — Middleware
 - What Middleware Is
 - Request Processing
 - Response Processing
 - Custom Middleware
 - CORS Middleware
 
-## Phase 8 — Exception Handling
+## Phase 9 — Exception Handling
 - Custom Exceptions
 - Global Exception Handlers
 - Validation Error Handling
 - Production Error Responses
 
-## Phase 9 — Background Tasks
+## Phase 10 — Background Tasks
 - BackgroundTasks
 - Email Sending
 - Long Running Operations
 - Async Processing
 
-## Phase 10 — File Handling
+## Phase 11 — File Handling
 - UploadFile
 - File Uploads
 - Image Uploads
@@ -83,55 +83,55 @@
 - Streaming Files
 - Static Files
 
-## Phase 11 — Advanced Pydantic
+## Phase 12 — Advanced Pydantic
 - Computed Fields
 - Model Config
 - Aliases
 - Generic Models
 - Complex Nested Models
 
-## Phase 12 — Async Programming
+## Phase 13 — Async Programming
 - async/await
 - Event Loop
 - Async Routes
 - Async Database Access
 - Concurrency
 
-## Phase 13 — WebSockets
+## Phase 14 — WebSockets
 - Real-time Communication
 - Chat Applications
 - Notifications
 - Live Updates
 
-## Phase 14 — Security
+## Phase 15 — Security
 - Security Utilities
 - API Keys
 - OAuth2
 - CSRF Concepts
 - Rate Limiting Concepts
 
-## Phase 15 — Testing
+## Phase 16 — Testing
 - TestClient
 - Pytest
 - API Testing
 - Mocking Dependencies
 - Integration Testing
 
-## Phase 16 — OpenAPI & Documentation
+## Phase 17 — OpenAPI & Documentation
 - OpenAPI Customization
 - Tags
 - Descriptions
 - Examples
 - Metadata
 
-## Phase 17 — Performance
+## Phase 18 — Performance
 - Caching
 - Redis
 - Connection Pooling
 - Optimization
 - Profiling
 
-## Phase 18 — Deployment
+## Phase 19 — Deployment
 - Gunicorn
 - Uvicorn Workers
 - Docker
@@ -139,14 +139,14 @@
 - Environment Variables
 - Production Settings
 
-## Phase 19 — Production Architecture
+## Phase 20 — Production Architecture
 - Logging
 - Monitoring
 - Health Checks
 - Configuration Management
 - Secrets Management
 
-## Phase 20 — Advanced FastAPI
+## Phase 21 — Advanced FastAPI
 - Lifespan Events
 - Event Handlers
 - Custom Responses
