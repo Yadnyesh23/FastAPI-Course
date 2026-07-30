@@ -1,30 +1,19 @@
 from app.schemas.request.user import RegisterUserRequestModel
+from app.schemas.response.user import RegisterUserResponseModel
 from app.repository.user import UserRepository
 from pwdlib import PasswordHash
+from app.core.jwt import create_access_token
 
 password_hash = PasswordHash.recommended()
 
 
 class UserService:
 
-    def validate_user_data(user):
-        if user.name is None or user.name == "":
-            return False, "Name is required"
-        if user.email is None or user.email == "":
-            return False, "Email is required"
-        if user.password is None or user.password == "":
-            return False, "Password is required"
-        return True, "User data is valid"
+ 
     
-    def regsiter_user(user_data : RegisterUserRequestModel):
+    def regsiter_user(user_data):
         # 1. Get user data from request
         user = user_data.model_dump()
-
-        # 2. Validate User data
-        is_valid_user, msg = UserService.validate_user_data(user)
-
-        if not is_valid_user:
-            return {"message" : msg}, 400
 
         # 3. check if user already exist or not(by email)
         is_user_exist = UserRepository.get_user_by_email(user["email"])
@@ -42,5 +31,12 @@ class UserService:
         if not result:
             return {"message" : "User not created"}, 500
         # 6. Generate Access Token
+        access_token = create_access_token({"email" : user["email"]})
+
         # 7. Return User Data + Access Token
-        
+        return RegisterUserResponseModel(
+            username = user["username"],
+            email = user["email"],
+            access_token = access_token,
+            token_type = "bearer"
+        )
