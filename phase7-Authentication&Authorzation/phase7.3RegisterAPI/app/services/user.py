@@ -26,10 +26,10 @@ class UserService:
         user["password"] = hashed_password
         
         # 5. Call Repository layer to create user
-        result = UserRepository.create_user(user)
+        # result = UserRepository.create_user(user)
         
-        if not result:
-            return {"message" : "User not created"}, 500
+        # if not result:
+        #     return {"message" : "User not created"}, 500
         # 6. Generate Access Token
         access_token = create_access_token({"email" : user["email"]})
 
