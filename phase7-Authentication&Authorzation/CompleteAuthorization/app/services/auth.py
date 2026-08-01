@@ -1,9 +1,12 @@
 
-from app.schemas.request.auth import RegisterRequest, LoginRequest
+from fastapi import HTTPException
+
+from app.core.jwt import JWTHelper
+from app.core.security import hash_password, verify_password
 from app.models.user import UserModel
 from app.repository.user import UserRepository
-from app.core.security import hash_password, verify_password
-from fastapi import HTTPException
+from app.schemas.request.auth import LoginRequest, RegisterRequest
+
 
 class AuthService:
     def __init__(self,user_repo:UserRepository):
@@ -29,6 +32,25 @@ class AuthService:
         
 
     async def login_user(self,user:LoginRequest):
-        pass
+        # Fetch user and check whether user exist
+        db_user = await self.user_repo.get_user_by_email(user.email)
+        if not db_user:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        # Compare password
+        if not verify_password(user.password, db_user.password):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        # Generate Access token
+        jwt_helper = JWTHelper()
+        payload={
+            "email": db_user.email,
+            "user_id": str(db_user.id)
+        }
+        jwt_token = jwt_helper.encode(payload)
+
+        # Return token
+        return {"access_token":jwt_token}
+
 
         

@@ -1,10 +1,10 @@
-from app.repository.user import UserRepository
 from fastapi import APIRouter, Depends
 
-from app.schemas.request.auth import RegisterRequest
-from app.schemas.response.auth import RegisterResponse
-from app.services.auth import AuthService
 from app.database.db import get_db
+from app.repository.user import UserRepository
+from app.schemas.request.auth import LoginRequest, RegisterRequest
+from app.schemas.response.auth import LoginResponse, RegisterResponse
+from app.services.auth import AuthService
 
 router = APIRouter(
     prefix="/auth",
@@ -29,4 +29,18 @@ async def register_user(
     return {
         "message":"User registered successfully",
         "user":user
+    }
+
+
+@router.post('/login', response_model=LoginResponse, status_code=200)
+async def login_user(
+    user : LoginRequest,
+    db=Depends(get_db)
+):
+    repo = UserRepository(db)
+    service = AuthService(repo)
+    result = await service.login_user(user)
+    return {
+        "message":"User logged in successfully",
+        "access_token":result["access_token"]
     }
