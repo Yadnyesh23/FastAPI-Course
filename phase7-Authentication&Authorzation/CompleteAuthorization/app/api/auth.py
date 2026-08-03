@@ -5,6 +5,7 @@ from app.repository.user import UserRepository
 from app.schemas.request.auth import LoginRequest, RegisterRequest
 from app.schemas.response.auth import LoginResponse, RegisterResponse
 from app.services.auth import AuthService
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(
     prefix="/auth",
@@ -34,12 +35,13 @@ async def register_user(
 
 @router.post('/login', response_model=LoginResponse, status_code=200)
 async def login_user(
-    user : LoginRequest,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db=Depends(get_db)
 ):
     repo = UserRepository(db)
     service = AuthService(repo)
-    result = await service.login_user(user)
+    result = await service.login_user(email=form_data.username,
+    password=form_data.password,)
     return {
         "message":"User logged in successfully",
         "access_token":result["access_token"]

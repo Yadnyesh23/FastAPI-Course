@@ -31,21 +31,22 @@ class AuthService:
         return new_user
         
 
-    async def login_user(self,user:LoginRequest):
+    async def login_user(self,email: str,
+    password: str,):
         # Fetch user and check whether user exist
-        db_user = await self.user_repo.get_user_by_email(user.email)
+        db_user = await self.user_repo.get_user_by_email(email)
         if not db_user:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
         # Compare password
-        if not verify_password(user.password, db_user.password):
+        if not verify_password(password, db_user.password):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
         # Generate Access token
         jwt_helper = JWTHelper()
         payload={
+            "sub": str(db_user.id),
             "email": db_user.email,
-            "user_id": str(db_user.id)
         }
         jwt_token = jwt_helper.encode(payload)
 
