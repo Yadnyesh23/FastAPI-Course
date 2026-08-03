@@ -1,9 +1,10 @@
+from app.core.jwt import JWTHelper
 from fastapi import APIRouter, Depends
 
 from app.database.db import get_db
 from app.repository.user import UserRepository
-from app.schemas.request.auth import LoginRequest, RegisterRequest
-from app.schemas.response.auth import LoginResponse, RegisterResponse
+from app.schemas.request.auth import LoginRequest, RegisterRequest, RefreshTokenRequest
+from app.schemas.response.auth import LoginResponse, RegisterResponse, RefreshTokenResponse
 from app.services.auth import AuthService
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -46,3 +47,26 @@ async def login_user(
         "message":"User logged in successfully",
         "access_token":result["access_token"]
     }
+
+
+@router.post(
+    "/refresh",
+    response_model=RefreshTokenResponse,
+    status_code=200
+)
+async def refresh_access_token(
+    request: RefreshTokenRequest,
+    db=Depends(get_db),
+):
+    repo = UserRepository(db)
+    service = AuthService(repo)
+
+    result = await service.refresh_access_token(request.refresh_token)
+
+    return {
+        "message": "Access token refreshed successfully",
+        "access_token": result["access_token"],
+        "refresh_token": result["refresh_token"],
+        "token_type": "bearer"
+    }
+

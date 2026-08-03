@@ -48,10 +48,45 @@ class AuthService:
             "sub": str(db_user.id),
             "email": db_user.email,
         }
-        jwt_token = jwt_helper.encode(payload)
+        access_token = jwt_helper.create_access_token({
+            "sub": str(db_user.id),
+            "email": db_user.email,
+        })
+
+        refresh_token = jwt_helper.create_refresh_token({
+            "sub": str(db_user.id),
+        })
 
         # Return token
-        return {"access_token":jwt_token}
+        return {"access_token":access_token, "refresh_token":refresh_token}
+    
+    async def refresh_access_token(self, refresh_token: str):
+        jwt_helper = JWTHelper()
+
+        # Verify refresh token
+        payload = jwt_helper.decode_refresh_token(refresh_token)
+
+        # Extract user id
+        user_id = payload["sub"]
+
+        # Check user still exists
+        db_user = await self.user_repo.get_user_by_id(user_id)
+
+        if not db_user:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
+
+        # Create new access token
+        new_access_token = jwt_helper.create_access_token({
+            "sub": str(db_user.id),
+            "email": db_user.email,
+        })
+
+        return {
+            "access_token": new_access_token
+    }
 
 
         
