@@ -3,6 +3,7 @@ import shutil
 import uuid
 
 from fastapi import HTTPException, UploadFile
+from fastapi.responses import FileResponse
 
 # Directory where uploaded files will be stored
 UPLOAD_DIR = Path("uploads")
@@ -94,3 +95,32 @@ def upload_file(file: UploadFile):
     # Create the complete destination path
     # Save the uploaded file to disk
     # Return uploaded file metadata
+
+def download_file(filename: str):
+    file_path = UPLOAD_DIR / filename
+    
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="File not found."
+        )
+        
+    return FileResponse(
+        path=file_path,
+        filename=filename
+    )
+
+def delete_file(filename:str):
+    file_path = UPLOAD_DIR/filename
+
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="File not found."
+        )
+        
+    file_path.unlink()
+    
+    return {
+        "message": "File deleted successfully."
+    }

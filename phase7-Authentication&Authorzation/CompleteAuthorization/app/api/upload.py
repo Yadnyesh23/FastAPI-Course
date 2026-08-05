@@ -1,4 +1,4 @@
-from app.services.upload import upload_file
+from app.services.upload import upload_file, download_file, delete_file
 from fastapi import APIRouter, UploadFile, File
 
 router = APIRouter(prefix="/upload", tags=["Upload"])
@@ -23,3 +23,10 @@ async def upload_multiple_files(
         "files": uploaded_files
     }
 
+@router.post('/download')
+async def download(filename: str):
+    return download_file(filename)
+    
+@router.post('/delete')
+async def delete(filename: str):
+    return delete_file(filename)
