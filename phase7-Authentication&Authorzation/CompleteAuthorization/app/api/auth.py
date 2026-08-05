@@ -45,7 +45,8 @@ async def login_user(
     password=form_data.password,)
     return {
         "message":"User logged in successfully",
-        "access_token":result["access_token"]
+        "access_token":result["access_token"],
+        "refresh_token":result["refresh_token"]
     }
 
 
