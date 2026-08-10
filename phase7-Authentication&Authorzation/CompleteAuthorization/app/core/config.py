@@ -7,7 +7,10 @@ class Settings(BaseSettings):
     JWT_ALGORITHM:str
     JWT_ACCESS_TOKEN_EXPIRY_MINUTES:int
     JWT_REFRESH_TOKEN_EXPIRY_DAYS:int
-
+    IMAGEKIT_PUBLIC_KEY:str
+    IMAGEKIT_PRIVATE_KEY:str
+    IMAGEKIT_URL_ENDPOINT:str
+    
     model_config = SettingsConfigDict(
         env_file='.env',
         extra='ignore'
